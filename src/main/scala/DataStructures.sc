@@ -21,10 +21,8 @@ enum Numbers {
 }
 
 enum PhaseTypes {
-  case DOUBLE
-  case TRIPLE
-  case QUADRUPLE
-  case QUINTUPLE
+  case DOUBLE, TRIPLE, QUADRUPLE, QUINTUPLE
+
   case FOURROW
   case COLOR
 
@@ -33,8 +31,12 @@ enum PhaseTypes {
   case NINEROW
 }
 
-class Card(val color: Colors, val number: Numbers)
-class Phase(val phase: List[PhaseTypes])
+class Card(val color: Colors, val number: Numbers) {
+  override def toString: String = color.toString + " " + number.toString
+}
+class Phase(val phase: List[PhaseTypes]) {
+  override def toString: String = phase.mkString(", ")
+}
 
 def randomCard(): Card = {
   val colors = Colors.values
@@ -46,7 +48,7 @@ def randomCard(): Card = {
     return Card(color, number)
   }
 
-  val number = numbers(Random.nextInt(numbers.length))
+  val number = numbers(Random.nextInt(numbers.length - 2))
   Card(color, number)
 }
 
@@ -63,6 +65,3 @@ def randomPhases(): Phase = {
 
 val phaseList = List.fill(10)(randomPhases())
 val list = List.fill(10)(randomCard())
-
-list.foreach(x => println(x.color.toString + " " + x.number.toString))
-phaseList.foreach(x => println(x.phase.mkString(", ")))
