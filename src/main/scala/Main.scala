@@ -67,9 +67,9 @@ object Main {
   
   def main(args: Array[String]): Unit = {
     val phaseList = List.fill(10)(randomPhases())
-    val list = List.fill(10)(randomCard())
+    val list3 = List.fill(10)(randomCard())
     
     println(phaseList.toString())
-    println(list.toString())
+    println(list3.toString())
   }
 }
