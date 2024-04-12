@@ -64,12 +64,12 @@ object Main {
     val phaseTwo = types(Random.nextInt(4))
     Phase(List(phaseOne, phaseTwo))
   }
-  
+
   def main(args: Array[String]): Unit = {
     val phaseList = List.fill(10)(randomPhases())
-    val list = List.fill(10)(randomCard())
-    
+    val list2 = List.fill(10)(randomCard())
+
     println(phaseList.toString())
-    println(list.toString())
+    println(list2.toString())
   }
 }
