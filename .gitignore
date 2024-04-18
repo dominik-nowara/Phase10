@@ -1,0 +1,8 @@
+.bsp/
+.bsp/*
+.idea/
+.idea/*
+target/
+target/*
+project/target/*
+project/target
