@@ -22,25 +22,22 @@ enum Numbers {
   case JOKER
 }
 
-class Card(val color: Colors, val number: Numbers) {
+case class Card(val color: Colors, val number: Numbers) {
   override def toString: String = color.toString + " " + number.toString
 }
 
-def randomCard(): Card = {
-  val colors = Colors.values
+def randomCard(): Card = randomColorCard(Colors.values(Random.nextInt(Colors.values.length - 1)))
+
+def randomColorCard(color: Colors) = {
   val numbers = Numbers.values
-  val color = colors(Random.nextInt(colors.length))
-
-  if (color == Colors.BLACK) {
-    val number = numbers(Random.nextInt(2) + 12)
-    return Card(color, number)
-  }
-
   val number = numbers(Random.nextInt(numbers.length - 2))
   Card(color, number)
 }
 
-def randomStack() = {
-  val stack = List.fill(10)(randomCard())
-  stack
+def randomBlackCards(randomNumber: Int) = List.fill(randomNumber)(randomBlackCard())
+
+def randomBlackCard() = {
+  val numbers = Numbers.values
+  val number = numbers(Random.nextInt(2) + 12)
+  Card(Colors.BLACK, number)
 }
