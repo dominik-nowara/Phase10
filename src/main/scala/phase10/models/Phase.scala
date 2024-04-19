@@ -24,6 +24,16 @@ def randomPhases(): Phase = {
   if (Random.nextInt(2) == 0 || phaseOne.ordinal > 5)
     return Phase(List(phaseOne))
 
-  val phaseTwo = types(Random.nextInt(4))
+  secondPhase(phaseOne)
+}
+
+def firstPhase(): Phase = {
+  val types = PhaseTypes.values
+  val phaseOne = types(Random.nextInt(types.length - 5))
+  Phase(List(phaseOne))
+}
+
+def secondPhase(phaseOne: PhaseTypes): Phase = {
+  val phaseTwo = PhaseTypes.values(Random.nextInt(4))
   Phase(List(phaseOne, phaseTwo))
 }
