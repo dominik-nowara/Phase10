@@ -24,7 +24,7 @@ class CardSpec extends AnyWordSpec {
     }
     "is black" should {
       val black = randomBlackCard()
-      "be over 10" in {
+      "number be over 12" in {
         black.number.ordinal should be > 11
       }
     }
@@ -32,7 +32,7 @@ class CardSpec extends AnyWordSpec {
       val colors = Colors.values
       val color = colors(Random.nextInt(colors.length))
       val colored = randomColorCard(color)
-      "be number between 0 and 12" in {
+      "number be between 1 and 12" in {
         colored.number.ordinal should be < 12
       }
     }
