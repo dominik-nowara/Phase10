@@ -14,8 +14,18 @@ class TUI (val controller: GameController) extends Observer:
   override def update(e: Event): Unit =
     e match
       case Event.Quit => System.exit(0)
-      case Event.Draw => println(controller.round.player.toString)
-      case Event.Start => println(controller.round.player.toString)
+      case Event.Draw => nextRound()
+      case Event.Start =>
+      case Event.Swap => {
+        printSpace()
+        val player = controller.round.player(controller.round.current)
+        println(s"${YELLOW}Current Phase: ${player.phase}${RESET}")
+        printLine()
+        println(player.cardHand.createLine())
+        print(player.name  + ": | ")
+        println(player.cardHand.toString)
+        println("Please input number of the card you want to exchange:")
+      }
 
   def initialize(): Unit = {
     println(s"${GREEN}${BOLD}Welcome to Phase 10!${RESET}")
@@ -25,6 +35,11 @@ class TUI (val controller: GameController) extends Observer:
     ReadNumber()
   }
 
+  private def printLine(): Unit = {
+    print("----------|")
+  }
+  private def printSpace(): Unit = println("\n" * 50)
+
   private def ReadNumber(): Unit = {
     println("Please enter the amount of players:")
     val playerCount = readLine()
@@ -33,42 +48,46 @@ class TUI (val controller: GameController) extends Observer:
       return
     }
 
-    controller.initRound(playerCount.toInt)
+    controller.initGame(playerCount.toInt)
+    println(s"${GREEN}Is the first player ready? (y/n)${RESET}")
     inputLoop()
   }
 
   private def nextRound(): Unit = {
-    println("\n" * 50)
-    println(s"${GREEN}${BOLD}Player swap!${RESET}")
-  }
-
-  private def printCard(card: Card): Unit = {
-    card.color match {
-      case Colors.RED => print(s"${RED}${card.number}${RESET} ")
-      case Colors.YELLOW => print(s"${YELLOW}${card.number}${RESET} ")
-      case Colors.GREEN => print(s"${GREEN}${card.number}${RESET} ")
-      case Colors.BLUE => print(s"${BLUE}${card.number}${RESET} ")
-      case Colors.BLACK => print(s"${BLACK}${card.number}${RESET} ")
-    }
+    printSpace()
+    println(s"${BLUE}${BOLD}Player swap!${RESET}")
+    println(s"${GREEN}Is the player ${controller.round.current + 1} ready? (y/n)${RESET}")
   }
 
   @tailrec
   private def inputLoop(): Unit =
     analyseInput(readLine) match
       case None =>
-      case Some(move) =>
+      case Some("help") => {
+        println(s"${GREEN}${BOLD}Help menu${RESET}\n${BLUE}Press 'q' to quit the game\nPress 'y' accept the player swap\nPress a number to play change a card${RESET}\n")
+      }
+      case Some(boolean) => nextRound()
     inputLoop()
 
   private def analyseInput(input: String) =
     input match
-      case "q" => controller.quitRound(); None
+      case "q" => controller.quitGame(); None
       case "y" => {
         if (controller.round.swap) {
           controller.swap()
         }
         None
       }
+      case "h" => {
+        Some("help")
+      }
       case _ => {
-        Some("X")
+        // Check if input is number
+        if (!input.forall(_.isDigit)) {
+          None
+        } else {
+          controller.drawNewCard(input.toInt - 1)
+          Some("")
+        }
       }
 
