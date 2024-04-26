@@ -8,26 +8,45 @@ import scala.util.Random
 
 class PhaseSpec extends AnyWordSpec {
   "A Phase 10 Phase" should {
-    "be contain at least 1 phasetype" in {
+    "contain at least 1 phasetype" in {
       val phase = randomPhases()
       phase.phase.size should be > 0
     }
-    "if single phase exactly one phasetype" in {
+    "contain 1 or 2 types" in {
+      val phase = randomPhases()
+      if (phase.phase.length == 2) {
+        phase.phase.head.ordinal should be <= 5
+        phase.phase(1).ordinal should be < 4
+        phase.phase.length should be (2)
+      }
+      else {
+        phase.phase.head.ordinal should be > 0
+        phase.phase.length should be (1)
+      }
+    }
+    "single phase contain exactly one phasetype" in {
       val singlePhase = firstPhase()
       singlePhase.phase.size should be (1)
     }
-    "if double phase exactly two phasetypes" in {
+    "double phase contain exactly two phasetypes" in {
       val types = PhaseTypes.values
       val phaseOne = types(Random.nextInt(types.length - 5))
       val doublePhase = secondPhase(phaseOne)
       doublePhase.phase.size should be (2)
     }
-    "if double phase both cards under 5" in {
+    "double phase both cards contain phasetype under 5" in {
       val types = PhaseTypes.values
       val phaseOne = types(Random.nextInt(types.length - 5))
       val doublePhase = secondPhase(phaseOne)
       doublePhase.phase.head.ordinal should be < 5
       doublePhase.phase(1).ordinal should be < 4
+    }
+    "phase string should look like" in {
+      val types = PhaseTypes.values
+      val phaseType1 = types(0)
+      val phaseType2 = types(0)
+      val phase = Phase(List(phaseType1, phaseType2))
+      phase.toString should be (s"DOUBLE, DOUBLE")
     }
   }
 }

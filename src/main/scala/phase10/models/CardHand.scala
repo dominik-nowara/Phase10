@@ -8,7 +8,11 @@ def randomStack(): List[Card] = {
 }
 
 case class CardHand(cards: List[Card] = randomStack()) {
-  override def toString: String = cards.mkString(", ") + s" (${cards.length})"
+  override def toString: String = cards.mkString(" | ") + s"    (${cards.length})"
+
+  def createLine(): String = {
+    cards.zipWithIndex.map { case (card, index) => s" ${index + 1}${card.extraSpace()} |" }.mkString
+  }
 
   def removeCard(index: Int): CardHand = {
     val newCards = cards.slice(0, index) ++ cards.slice(index + 1, cards.length)
