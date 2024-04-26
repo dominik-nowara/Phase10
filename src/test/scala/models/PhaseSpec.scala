@@ -12,6 +12,18 @@ class PhaseSpec extends AnyWordSpec {
       val phase = randomPhases()
       phase.phase.size should be > 0
     }
+    "contain 1 or 2 types" in {
+      val phase = randomPhases()
+      if (phase.phase.length == 2) {
+        phase.phase.head.ordinal should be <= 5
+        phase.phase(1).ordinal should be < 4
+        phase.phase.length should be (2)
+      }
+      else {
+        phase.phase.head.ordinal should be > 0
+        phase.phase.length should be (1)
+      }
+    }
     "single phase contain exactly one phasetype" in {
       val singlePhase = firstPhase()
       singlePhase.phase.size should be (1)
@@ -28,6 +40,13 @@ class PhaseSpec extends AnyWordSpec {
       val doublePhase = secondPhase(phaseOne)
       doublePhase.phase.head.ordinal should be < 5
       doublePhase.phase(1).ordinal should be < 4
+    }
+    "phase string should look like" in {
+      val types = PhaseTypes.values
+      val phaseType1 = types(0)
+      val phaseType2 = types(0)
+      val phase = Phase(List(phaseType1, phaseType2))
+      phase.toString should be (s"DOUBLE, DOUBLE")
     }
   }
 }
