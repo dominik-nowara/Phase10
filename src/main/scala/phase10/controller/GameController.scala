@@ -6,7 +6,6 @@ import phase10.util.*
 class GameController(var round: Round) extends Observable {
   def initGame(count: Int): Unit = {
     round = initRound(count)
-    notifyObservers(Event.Start)
   }
 
   def quitGame(): Unit = {
