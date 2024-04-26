@@ -30,10 +30,16 @@ class RoundSpec extends AnyWordSpec {
       }
     }
     "change something" should {
-      "next round" in {
-        val round = initRound()
+      "next round with two players" in {
+        val round = initRound(2)
         val nextRound = round.nextRound()
         nextRound.current should be(1)
+        nextRound.swap should be(true)
+      }
+      "next round with one player" in {
+        val round = initRound()
+        val nextRound = round.nextRound()
+        nextRound.current should be(0)
         nextRound.swap should be(true)
       }
       "swap player" in {
