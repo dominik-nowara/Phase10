@@ -10,12 +10,12 @@ import scala.io.StdIn.readLine
 
 class TUI (val controller: GameController) extends Observer:
   controller.add(this)
+  var continue = false
 
   override def update(e: Event): Unit =
     e match
-      case Event.Quit => System.exit(0)
+      case Event.Quit => continue = false
       case Event.Draw => nextRound()
-      case Event.Start =>
       case Event.Swap => {
         printSpace()
         val player = controller.round.player(controller.round.current)
@@ -35,12 +35,10 @@ class TUI (val controller: GameController) extends Observer:
     ReadNumber()
   }
 
-  private def printLine(): Unit = {
-    print("----------|")
-  }
-  private def printSpace(): Unit = println("\n" * 50)
+  def printLine(): Unit = print("----------|")
+  def printSpace(): Unit = print("\n" * 50)
 
-  private def ReadNumber(): Unit = {
+  def ReadNumber(): Unit = {
     println("Please enter the amount of players:")
     val playerCount = readLine()
     if (!playerCount.forall(_.isDigit)) {
@@ -53,23 +51,20 @@ class TUI (val controller: GameController) extends Observer:
     inputLoop()
   }
 
-  private def nextRound(): Unit = {
+  def nextRound(): Unit = {
     printSpace()
-    println(s"${BLUE}${BOLD}Player swap!${RESET}")
-    println(s"${GREEN}Is the player ${controller.round.current + 1} ready? (y/n)${RESET}")
+    println(s"${BLUE}${BOLD}Player swap!${RESET}\n${GREEN}Is the player ${controller.round.current + 1} ready? (y/n)${RESET}")
   }
 
-  @tailrec
-  private def inputLoop(): Unit =
+  def inputLoop(): Unit =
     analyseInput(readLine) match
       case None =>
       case Some("help") => {
-        println(s"${GREEN}${BOLD}Help menu${RESET}\n${BLUE}Press 'q' to quit the game\nPress 'y' accept the player swap\nPress a number to play change a card${RESET}\n")
+        println(s"${GREEN}${BOLD}Help menu${RESET}\n${BLUE}Press 'q' to quit the game\nPress 'y' accept the player swap\nPress a number to play change a card${RESET}")
       }
-      case Some(boolean) => nextRound()
-    inputLoop()
+    if (continue) inputLoop()
 
-  private def analyseInput(input: String) =
+  def analyseInput(input: String) =
     input match
       case "q" => controller.quitGame(); None
       case "y" => {
@@ -87,7 +82,7 @@ class TUI (val controller: GameController) extends Observer:
           None
         } else {
           controller.drawNewCard(input.toInt - 1)
-          Some("")
+          None
         }
       }
 
