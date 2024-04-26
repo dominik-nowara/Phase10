@@ -1,25 +1,20 @@
 package phase10.models
 
-def initRound() = {
-  val player1 = Player("Player1", CardHand())
-  Round(List(player1), 0, true)
-}
-
-def firstRound(count: Int) = {
-  val players = List(1 to count).map(i => Player(s"Player $i", CardHand()))
+def initRound(count: Int = 1): Round = {
+  val players = (1 to count).map(i => Player(s"Player ${i}", CardHand(), randomPhases(), false)).toList
   Round(players, 0, true)
 }
 
-case class Round(val player: List[Player], val current: Int, val swap: Boolean) {
-  def nextRound(): Unit = {
-    if (current == 0) {
-      copy(player, 1, true)
+case class Round(player: List[Player], current: Int, swap: Boolean) {
+  def nextRound(): Round = {
+    if (current == player.length - 1) {
+      return copy(current = 0, swap = true)
     }
 
-    copy(player, 0, true)
+    copy(current = current + 1, swap = true)
   }
 
-  def swapPlayer(): Unit = {
+  def swapPlayer(): Round = {
     copy(player, current, false)
   }
 }
