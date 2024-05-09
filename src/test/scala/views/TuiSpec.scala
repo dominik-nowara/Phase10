@@ -32,7 +32,7 @@ class TuiSpec extends AnyWordSpec {
       Console.withOut(outCapture) {
         tui.nextRound()
       }
-      outCapture.toString should be(("\n" * 50) + s"${BLUE}${BOLD}Player swap!${RESET}\n${GREEN}Is the player ${controller.round.current + 1} ready? (y/n)${RESET}\r\n")
+      outCapture.toString should be(("\n" * 50) + s"${BLUE}${BOLD}Player swap!${RESET}\n${GREEN}Is the player ${controller.round.current + 1} ready? (y/n)${RESET}\n")
     }
     "line should look like" in {
       val outCapture = ByteArrayOutputStream()
@@ -68,7 +68,7 @@ class TuiSpec extends AnyWordSpec {
               tui.inputLoop()
             }
           }
-          outCapture.toString should be (s"${GREEN}${BOLD}Help menu${RESET}\n${BLUE}Press 'q' to quit the game\nPress 'y' accept the player swap\nPress a number to play change a card${RESET}\r\n")
+          outCapture.toString should be (s"${GREEN}${BOLD}Help menu${RESET}\n${BLUE}Press 'q' to quit the game\nPress 'y' accept the player swap\nPress a number to play change a card${RESET}\n")
         }
         "next round on number" in {
           val inStream = new ByteArrayInputStream("1".getBytes)
@@ -80,7 +80,7 @@ class TuiSpec extends AnyWordSpec {
               tui.inputLoop()
             }
           }
-          outCapture.toString should be(("\n" * 50) + s"${BLUE}${BOLD}Player swap!${RESET}\n${GREEN}Is the player ${controller.round.current + 1} ready? (y/n)${RESET}\r\n")
+          outCapture.toString should be(("\n" * 50) + s"${BLUE}${BOLD}Player swap!${RESET}\n${GREEN}Is the player ${controller.round.current + 1} ready? (y/n)${RESET}\n")
         }
       }
     }
