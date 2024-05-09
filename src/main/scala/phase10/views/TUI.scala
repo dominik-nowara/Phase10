@@ -10,7 +10,7 @@ import scala.io.StdIn.readLine
 
 class TUI (val controller: GameController) extends Observer:
   controller.add(this)
-  var continue = false
+  var continue = true
 
   override def update(e: Event): Unit =
     e match
