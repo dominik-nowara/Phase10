@@ -31,4 +31,14 @@ jobs:
       run: sbt test
       # Optional: This step uploads information to the GitHub dependency graph and unblocking Dependabot alerts for the repository
 
-
+run_tests:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v2
+    - name: Build Project and export Coverage
+      env:
+        CODECOV_TOKEN: ${{secret.CODECOV_TOKEN}}
+        COVERALLS_REPO_TOKEN: ${{secret.COVERALLS_REPO_TOKEN}}
+      run:
+        export CI_BRANCH="${GITHUB_REF#refs/heads/}"
+        sbt clean jacoco jacocoCoveralls
