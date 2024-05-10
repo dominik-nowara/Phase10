@@ -44,6 +44,31 @@ class GameControllerSpec  extends AnyWordSpec {
       val cardAfter = controller.round.player.head.cardHand.cards.head
       cardAfter should not be (cardBefore)
     }
+    "win game on correct phase" in {
+      val cardHands = CardHand.CardHand(List(
+        Card.Card(Card.Colors.RED, Card.Numbers.ONE),
+        Card.Card(Card.Colors.RED, Card.Numbers.ONE),
+        Card.Card(Card.Colors.RED, Card.Numbers.TWO)
+      ))
+      val newPhase = Phase.Phase(List(Phase.PhaseTypes.DOUBLE))
+      val newPlayer = Player("Player 1", cardHands, newPhase, false)
+      val newRound = Round.Round(List(newPlayer), 0, false)
+      val newController = GameController(newRound)
+
+      class TestObservers(newController: GameController) extends Observer:
+        newController.add(this)
+        var bing = false
+
+        def update(e: Event): Unit = {
+          if (e == Event.Win) bing = true
+        }
+
+      val testObserver = TestObservers(newController)
+
+      testObserver.bing should be(false)
+      newController.drawNewCard(2)
+      testObserver.bing should be(true)
+    }
     "swap player correctly" in {
       val before = controller.round.swap
       controller.swap()
