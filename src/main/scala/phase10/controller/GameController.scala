@@ -3,9 +3,9 @@ package phase10.controller
 import phase10.models.*
 import phase10.util.*
 
-class GameController(var round: Round) extends Observable {
+class GameController(var round: Round.Round) extends Observable {
   def initGame(count: Int): Unit = {
-    round = initRound(count)
+    round = Round.initRound(count)
   }
 
   def quitGame(): Unit = {

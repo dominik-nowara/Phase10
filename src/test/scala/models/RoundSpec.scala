@@ -6,7 +6,7 @@ import org.scalatest.matchers.should.Matchers.*
 class RoundSpec extends AnyWordSpec {
   "A Round" when {
     "initialized" should {
-      val round = initRound()
+      val round = Round.initRound()
       "have one player" in {
         round.player.length should be(1)
       }
@@ -18,7 +18,7 @@ class RoundSpec extends AnyWordSpec {
       }
     }
     "initialized with two players" should {
-      val round = initRound(2)
+      val round = Round.initRound(2)
       "have two players" in {
         round.player.length should be(2)
       }
@@ -31,19 +31,19 @@ class RoundSpec extends AnyWordSpec {
     }
     "change something" should {
       "next round with two players" in {
-        val round = initRound(2)
+        val round = Round.initRound(2)
         val nextRound = round.nextRound()
         nextRound.current should be(1)
         nextRound.swap should be(true)
       }
       "next round with one player" in {
-        val round = initRound()
+        val round = Round.initRound()
         val nextRound = round.nextRound()
         nextRound.current should be(0)
         nextRound.swap should be(true)
       }
       "swap player" in {
-        val round = initRound()
+        val round = Round.initRound()
         val nextRound = round.swapPlayer()
         nextRound.current should be(0)
         nextRound.swap should be(false)
