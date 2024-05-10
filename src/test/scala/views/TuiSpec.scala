@@ -11,7 +11,7 @@ import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 
 class TuiSpec extends AnyWordSpec {
   "A TUI" when {
-    val round = initRound(2)
+    val round = Round.initRound(2)
     val controller = GameController(round)
     val tui = TUI(controller)
     "be initialized with a game" should {

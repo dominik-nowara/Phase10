@@ -77,7 +77,6 @@ class TUI (val controller: GameController) extends Observer:
         Some("help")
       }
       case _ => {
-        // Check if input is number
         if (!input.forall(_.isDigit)) {
           None
         } else {

@@ -7,7 +7,7 @@ import org.scalatest.matchers.should.Matchers.*
 
 class GameControllerSpec  extends AnyWordSpec {
   "A game controller" when {
-    val controller = GameController(initRound())
+    val controller = GameController(Round.initRound())
     "initialized" should {
       "have a game with 4 players" in {
         controller.initGame(4)
