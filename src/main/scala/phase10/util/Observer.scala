@@ -14,3 +14,4 @@ enum Event:
   case Start
   case Draw
   case Swap
+  case Win

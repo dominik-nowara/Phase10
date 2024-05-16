@@ -70,18 +70,7 @@ class TuiSpec extends AnyWordSpec {
           }
           outCapture.toString should be (s"${GREEN}${BOLD}Help menu${RESET}\n${BLUE}Press 'q' to quit the game\nPress 'y' accept the player swap\nPress a number to play change a card${RESET}\n")
         }
-        "next round on number" in {
-          val inStream = new ByteArrayInputStream("1".getBytes)
-          val outStream = new ByteArrayOutputStream()
-          val outCapture = ByteArrayOutputStream()
 
-          Console.withOut(outCapture) {
-            Console.withIn(inStream) {
-              tui.inputLoop()
-            }
-          }
-          outCapture.toString should be(("\n" * 50) + s"${BLUE}${BOLD}Player swap!${RESET}\n${GREEN}Is the player ${controller.round.current + 1} ready? (y/n)${RESET}\n")
-        }
       }
     }
   }

@@ -13,9 +13,16 @@ class GameController(var round: Round.Round) extends Observable {
   }
 
   def drawNewCard(position: Int): Unit = {
+    val win = PhaseCheck.checkPhases(round.player(round.current))
+    if (win) {
+      notifyObservers(Event.Win)
+      return
+    }
+
     val cardHand = round.player(round.current).cardHand.changeCard(position)
     val player = round.player(round.current).copy(cardHand = cardHand)
     val players = round.player.updated(round.current, player)
+
     val nextRound = round.nextRound()
     round = nextRound.copy(player = players, swap = true)
     notifyObservers(Event.Draw)

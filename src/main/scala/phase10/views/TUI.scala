@@ -16,6 +16,7 @@ class TUI (val controller: GameController) extends Observer:
     e match
       case Event.Quit => continue = false
       case Event.Draw => nextRound()
+      case Event.Win => win()
       case Event.Swap => {
         printSpace()
         val player = controller.round.player(controller.round.current)
@@ -54,6 +55,11 @@ class TUI (val controller: GameController) extends Observer:
   def nextRound(): Unit = {
     printSpace()
     println(s"${BLUE}${BOLD}Player swap!${RESET}\n${GREEN}Is the player ${controller.round.current + 1} ready? (y/n)${RESET}")
+  }
+
+  def win (): Unit = {
+    continue = false
+    println(s"${GREEN}${BOLD}Player ${controller.round.current} won!${RESET}\n${RESET}")
   }
 
   def inputLoop(): Unit =
