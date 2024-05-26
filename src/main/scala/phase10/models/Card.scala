@@ -44,18 +44,18 @@ object Card {
       }
 
       color match {
-        case Colors.RED => s"${RED}${numberString}${RESET}"
-        case Colors.YELLOW => s"${YELLOW}${numberString}${RESET}"
-        case Colors.GREEN => s"${GREEN}${numberString}${RESET}"
-        case Colors.BLUE => s"${BLUE}${numberString}${RESET}"
-        case Colors.BLACK => s"${BLACK}${numberString}${RESET}"
+        case Colors.RED => s"${RED_B}${BLACK} ${numberString} ${RESET}"
+        case Colors.YELLOW => s"${YELLOW_B}${BLACK} ${numberString} ${RESET}"
+        case Colors.GREEN => s"${GREEN_B}${BLACK} ${numberString} ${RESET}"
+        case Colors.BLUE => s"${BLUE_B}${BLACK} ${numberString} ${RESET}"
+        case Colors.BLACK => s"${BLACK_B} ${numberString} ${RESET}"
       }
     }
 
     def extraSpace(): String = if (number.ordinal > 8 && number.ordinal < 12) " " else ""
   }
 
-  def randomCard(): Card = randomColorCard(Colors.values(Random.nextInt(Colors.values.length - 1)))
+  def randomCard(): Card = if (Random.nextInt(100) < 10) randomBlackCard() else randomColorCard(Colors.values(Random.nextInt(Colors.values.length - 1)))
 
   def randomColorCard(color: Colors) = {
     val numbers = Numbers.values
