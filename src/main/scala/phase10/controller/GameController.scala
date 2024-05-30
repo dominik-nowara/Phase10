@@ -3,33 +3,63 @@ package phase10.controller
 import phase10.models.*
 import phase10.util.*
 
-class GameController(var round: Round.Round) extends Observable {
+class GameController(var player: List[Player]) extends Observable {
+  val undoManager = new UndoManager[List[Player]]
   def initGame(count: Int): Unit = {
-    round = Round.initRound(count)
+    player = List.tabulate(count)(i => PlayerFactory.createPlayer(s"Player ${i + 1}"))
+  }
+  def doAndPublish(state: GameState): Unit = {
+    state.run(this, notifyObservers) match {
+      case Some(newPlayer) => player = newPlayer
+      case None => ()
+    }
   }
 
-  def quitGame(): Unit = {
-    notifyObservers(Event.Quit)
-  }
-
-  def drawNewCard(position: Int): Unit = {
-    val win = PhaseCheck.checkPhases(round.player(round.current))
+  def win(): Boolean = {
+    val win = player(GameManager.current).checkPhase()
     if (win) {
       notifyObservers(Event.Win)
-      return
+      return true
     }
-
-    val cardHand = round.player(round.current).cardHand.changeCard(position)
-    val player = round.player(round.current).copy(cardHand = cardHand)
-    val players = round.player.updated(round.current, player)
-
-    val nextRound = round.nextRound()
-    round = nextRound.copy(player = players, swap = true)
-    notifyObservers(Event.Draw)
+    false
   }
 
-  def swap(): Unit = {
-    round = round.swapPlayer()
-    notifyObservers(Event.Swap)
+  def undo(): Unit = {
+    player = undoManager.undoStep(player)
+    notifyObservers(Event.Draw)
+  }
+  def redo(): Unit = {
+    player = undoManager.redoStep(player)
+    notifyObservers(Event.Draw)
+  }
+  def quitGame(): Unit = notifyObservers(Event.Quit)
+}
+
+object GameManager {
+  var stack: Option[List[GameCard]] = None
+  var current: Int = 0
+  var swap: Boolean = true
+
+  def putOnStack(card: GameCard): Unit = {
+    stack = Some(stack.getOrElse(List()) :+ card)
+    println("Stack size: " + stack.get.size)
+  }
+
+  def removeFromStack(): Unit = {
+    if (stack.get.length == 1) {
+      stack = None
+    } else {
+      stack = Some(stack.get.dropRight(stack.get.length - 1))
+    }
+  }
+
+  def nextPlayer(amountPlayer: Int, amount: Int): Unit = {
+    swap = true
+    current = (current + amount) % amountPlayer
+  }
+
+  def previousPlayer(amountPlayer: Int, amount: Int): Unit = {
+    swap = true
+    current = (current - amount + amountPlayer) % amountPlayer
   }
 }
