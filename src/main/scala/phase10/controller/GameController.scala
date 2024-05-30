@@ -9,6 +9,7 @@ class GameController(var player: List[Player]) extends Observable {
     player = List.tabulate(count)(i => PlayerFactory.createPlayer(s"Player ${i + 1}"))
   }
   def doAndPublish(state: GameState): Unit = {
+
     state.run(this, notifyObservers) match {
       case Some(newPlayer) => player = newPlayer
       case None => ()
@@ -42,7 +43,6 @@ object GameManager {
 
   def putOnStack(card: GameCard): Unit = {
     stack = Some(stack.getOrElse(List()) :+ card)
-    println("Stack size: " + stack.get.size)
   }
 
   def removeFromStack(): Unit = {
