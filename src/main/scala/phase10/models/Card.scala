@@ -1,6 +1,5 @@
 package phase10.models
 
-import scala.util.Random
 import scala.io.AnsiColor.*
 
 object Card {
@@ -23,51 +22,61 @@ object Card {
     case BLOCK
     case JOKER
   }
+}
 
-  case class Card(val color: Colors, val number: Numbers) {
-    override def toString: String = {
-      val numberString = number match {
-        case Numbers.ONE => "1"
-        case Numbers.TWO => "2"
-        case Numbers.THREE => "3"
-        case Numbers.FOUR => "4"
-        case Numbers.FIVE => "5"
-        case Numbers.SIX => "6"
-        case Numbers.SEVEN => "7"
-        case Numbers.EIGHT => "8"
-        case Numbers.NINE => "9"
-        case Numbers.TEN => "10"
-        case Numbers.ELEVEN => "11"
-        case Numbers.TWELVE => "12"
-        case Numbers.BLOCK => "B"
-        case Numbers.JOKER => "J"
-      }
-
-      color match {
-        case Colors.RED => s"${RED_B}${BLACK} ${numberString} ${RESET}"
-        case Colors.YELLOW => s"${YELLOW_B}${BLACK} ${numberString} ${RESET}"
-        case Colors.GREEN => s"${GREEN_B}${BLACK} ${numberString} ${RESET}"
-        case Colors.BLUE => s"${BLUE_B}${BLACK} ${numberString} ${RESET}"
-        case Colors.BLACK => s"${BLACK_B} ${numberString} ${RESET}"
-      }
+case class GameCard(color: Card.Colors, number: Card.Numbers) {
+  override def toString: String = {
+    val numberString = number match {
+      case Card.Numbers.ONE => "1"
+      case Card.Numbers.TWO => "2"
+      case Card.Numbers.THREE => "3"
+      case Card.Numbers.FOUR => "4"
+      case Card.Numbers.FIVE => "5"
+      case Card.Numbers.SIX => "6"
+      case Card.Numbers.SEVEN => "7"
+      case Card.Numbers.EIGHT => "8"
+      case Card.Numbers.NINE => "9"
+      case Card.Numbers.TEN => "10"
+      case Card.Numbers.ELEVEN => "11"
+      case Card.Numbers.TWELVE => "12"
+      case Card.Numbers.BLOCK => "B"
+      case Card.Numbers.JOKER => "J"
     }
 
-    def extraSpace(): String = if (number.ordinal > 8 && number.ordinal < 12) " " else ""
+    color match {
+      case Card.Colors.RED => s"${RED_B}${BLACK} ${numberString} ${RESET}"
+      case Card.Colors.YELLOW => s"${YELLOW_B}${BLACK} ${numberString} ${RESET}"
+      case Card.Colors.GREEN => s"${GREEN_B}${BLACK} ${numberString} ${RESET}"
+      case Card.Colors.BLUE => s"${BLUE_B}${BLACK} ${numberString} ${RESET}"
+      case Card.Colors.BLACK => s"${BLACK_B} ${numberString} ${RESET}"
+    }
+  }
+  def extraSpace(): String = if (number.ordinal > 8 && number.ordinal < 12) " " else ""
+}
+
+object CardFactory {
+  def generateStack(playerName: String, time: Long, positions: List[Int]): List[GameCard] = {
+    positions.zipWithIndex.map { case (position, index) => generateCard(playerName, time, position) }
+  }
+  
+  def generateCard(playerName: String, time: Long, position: Int): GameCard = {
+    val hash = hashFunction(playerName, time, position);
+    val colors = Card.Colors.values.toSeq
+    val numbers = Card.Numbers.values.toSeq
+
+    val number = numbers(hash % numbers.size)
+
+    if (number == Card.Numbers.JOKER) return GameCard(Card.Colors.BLACK, number)
+    else if (number == Card.Numbers.BLOCK) return GameCard(Card.Colors.BLACK, number)
+
+    val color = colors(hash % (colors.size - 1))
+
+    GameCard(color, number)
   }
 
-  def randomCard(): Card = if (Random.nextInt(100) < 10) randomBlackCard() else randomColorCard(Colors.values(Random.nextInt(Colors.values.length - 1)))
-
-  def randomColorCard(color: Colors) = {
-    val numbers = Numbers.values
-    val number = numbers(Random.nextInt(numbers.length - 2))
-    Card(color, number)
-  }
-
-  def randomBlackCards(randomNumber: Int) = List.fill(randomNumber)(randomBlackCard())
-
-  def randomBlackCard() = {
-    val numbers = Numbers.values
-    val number = numbers(Random.nextInt(2) + 12)
-    Card(Colors.BLACK, number)
+  private def hashFunction(playerName: String, time: Long, position: Int): Int = {
+    val calculate = position * 4.6721 + time / (position + 2)
+    val toHash = s"$playerName$calculate";
+    toHash.hashCode.abs
   }
 }

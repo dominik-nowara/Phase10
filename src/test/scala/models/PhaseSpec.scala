@@ -9,44 +9,25 @@ import scala.util.Random
 class PhaseSpec extends AnyWordSpec {
   "A Phase 10 Phase" should {
     "contain at least 1 phasetype" in {
-      val phase = Phase.randomPhases()
-      phase.phase.size should be > 0
+      val phase = PhaseFactory.generatePhases("Player 1", 1)
+      phase.phases.size should be > 0
     }
-    "contain 1 or 2 types" in {
-      val phase = Phase.randomPhases()
-      if (phase.phase.length == 2) {
-        phase.phase.head.ordinal should be <= 5
-        phase.phase(1).ordinal should be < 4
-        phase.phase.length should be (2)
-      }
-      else {
-        phase.phase.head.ordinal should be > 0
-        phase.phase.length should be (1)
-      }
+    "should contain 1 phase on right values" in {
+      val phase = PhaseFactory.generatePhases("Player 1", 1)
+      phase.phases.head.ordinal should be > 0
+      phase.phases.length should be(1)
+      phase.phases should be (List(Phase.PhaseTypes.QUINTUPLE))
     }
-    "single phase contain exactly one phasetype" in {
-      val singlePhase = Phase.firstPhase()
-      singlePhase.phase.size should be (1)
+    "should contain 2 phases on right values" in {
+      val phase = PhaseFactory.generatePhases("Player 1", 5)
+      phase.phases.length should be(2)
+      phase.phases.head.ordinal should be <= 5
+      phase.phases(1).ordinal should be < 4
+      phase.phases should be (List(Phase.PhaseTypes.COLOR, Phase.PhaseTypes.DOUBLE))
     }
-    "double phase contain exactly two phasetypes" in {
-      val types = Phase.PhaseTypes.values
-      val phaseOne = types(Random.nextInt(types.length - 5))
-      val doublePhase = Phase.secondPhase(phaseOne)
-      doublePhase.phase.size should be (2)
-    }
-    "double phase both cards contain phasetype under 5" in {
-      val types = Phase.PhaseTypes.values
-      val phaseOne = types(Random.nextInt(types.length - 5))
-      val doublePhase = Phase.secondPhase(phaseOne)
-      doublePhase.phase.head.ordinal should be < 5
-      doublePhase.phase(1).ordinal should be < 4
-    }
-    "phase string should look like" in {
-      val types = Phase.PhaseTypes.values
-      val phaseType1 = types(0)
-      val phaseType2 = types(0)
-      val phase = Phase.Phase(List(phaseType1, phaseType2))
-      phase.toString should be (s"DOUBLE, DOUBLE")
+    "printed look like" in {
+      val phase = GamePhase(List(Phase.PhaseTypes.DOUBLE, Phase.PhaseTypes.TRIPLE))
+      phase.toString should startWith ("DOUBLE, TRIPLE")
     }
   }
 }

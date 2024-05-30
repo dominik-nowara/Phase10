@@ -8,8 +8,7 @@ import phase10.views.TUI
 
 object Main {
   def main(args: Array[String]): Unit = {
-    val round = Round.initRound()
-    val controller = GameController(round)
+    val controller = GameController(List())
     val tui = TUI(controller)
     tui.initialize()
   }
