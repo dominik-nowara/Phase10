@@ -39,10 +39,8 @@ object Phase {
 
   class CheckColor extends Check {
     override def check(cards: List[GameCard], amount: Int): Boolean = {
-      for (i <- cards.indices) {
-        if (cards.count(card =>
-          card.color == cards(i).color || card.number == Card.Numbers.JOKER)
-          == 8) {
+      for (color <- Card.Colors.values) {
+        if (cards.count(card => card.color == color || card.number == Card.Numbers.JOKER) >= 5) {
           return true
         }
       }
@@ -59,13 +57,17 @@ object Phase {
         cards match {
           case current :: tail =>
             if (current.number.ordinal == previous.number.ordinal + 1) {
-              if (count + 1 == amount) true // Found amount consecutive cards
+              if (count + 1 >= amount) true // Found amount consecutive cards
               else checkConsecutive(tail, current, count + 1)
-            } else {
-              checkConsecutive(tail, current, 1)
+            }
+            else if (current.number == Card.Numbers.JOKER) {
+              if (count + 1 >= amount) true // Found amount consecutive cards
+              else checkConsecutive(tail, current, count + 1)
+            }
+            else {
+              checkConsecutive(tail, current, count)
             }
           case Nil =>
-            if (count + cards.count(_.number == Card.Numbers.JOKER) >= amount) return true // Found amount consecutive cards
             false // Reached the end of the list without finding amount of consecutive cards
         }
       }
