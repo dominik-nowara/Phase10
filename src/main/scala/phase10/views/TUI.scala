@@ -108,6 +108,7 @@ class TUI (val controller: GameController) extends Observer:
       case "u" => controller.undo(); None
       case "r" => controller.redo(); None
       case "" => None
+      case null => None
       case _ =>
         if (input.contains("s")) {
           val strippedInput = input.replace("s", "")
