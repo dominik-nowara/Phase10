@@ -2,7 +2,7 @@ package phase10.models
 
 import phase10.controller.GameManager
 
-case class Player(name: String, cards: List[GameCard], phase: GamePhase, isFinished: Boolean) {
+case class Player(name: String, cards: List[GameCard], phase: GamePhase) {
   override def toString: String = name + ": " + cardsToString()
   def cardsToString(): String = cards.mkString(" | ")
 
@@ -20,7 +20,7 @@ case class Player(name: String, cards: List[GameCard], phase: GamePhase, isFinis
   }
 
   def previousPlayer(amountPlayer: Int): Unit = {
-    if (GameManager.stack.isDefined && GameManager.stack.get.last == Card.Numbers.BLOCK) {
+    if (GameManager.stack.isDefined && GameManager.stack.get.last.number == Card.Numbers.BLOCK) {
       GameManager.previousPlayer(amountPlayer, 2)
     }
     else {
@@ -85,6 +85,6 @@ object PlayerFactory {
     val cardPositions = List.range(0, 10)
     val time = System.currentTimeMillis()
     Player(name, CardFactory.generateStack(name, time, cardPositions),
-      PhaseFactory.generatePhases(name, time), false)
+      PhaseFactory.generatePhases(name, time))
   }
 }
