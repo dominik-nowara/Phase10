@@ -1,9 +1,11 @@
 package phase10.controller
 
-import phase10.models._
-import phase10.util._
+import phase10.models.*
+import phase10.util.*
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers.*
+
+import scala.util.{Failure, Success}
 
 class GameControllerSpec extends AnyWordSpec {
   "A game controller" when {
@@ -131,14 +133,17 @@ class GameControllerSpec extends AnyWordSpec {
       testObserver.bing should be (false)
       val failWin = customController.win()
       testObserver.bing should be (false)
-      failWin should be (false)
+      failWin match {
+        case Success(_) => fail("Should not be success")
+        case Failure(e) => e.getMessage should be("Phase not completed")
+      }
 
       GameManager.current = 1
 
       testObserver.bing should be(false)
       val win = customController.win()
       testObserver.bing should be(true)
-      win should be (true)
+      win should be (Success("Phase completed"))
     }
     "undo on play command" in {
       val cards = List(
