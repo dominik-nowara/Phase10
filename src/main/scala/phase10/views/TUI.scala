@@ -6,9 +6,12 @@ import phase10.util.*
 import scala.io.AnsiColor.*
 import scala.io.StdIn.readLine
 
+import scala.util.Failure
+
 class TUI (val controller: GameController) extends Observer:
   controller.add(this)
   var continue = true
+  var init = false
 
   override def update(e: Event): Unit =
     e match
@@ -38,18 +41,23 @@ class TUI (val controller: GameController) extends Observer:
   def ReadNumber(): Unit = {
     println(s"${BOLD}${BLACK_B} Please enter the amount of players: ${RESET}")
     val playerCount = readLine()
-    if (!playerCount.forall(_.isDigit)) {
-      ReadNumber()
-      return
-    }
+    if (!init) {
+      if (!playerCount.forall(_.isDigit)) {
+        ReadNumber()
+        return
+      }
 
-    printSpace()
-    controller.initGame(playerCount.toInt)
-    println(s"${GREEN}${BLACK_B} Is the first player ready? (Press 'y' if you're ready) ${RESET}")
+      printSpace()
+      controller.initGame(playerCount.toInt)
+    }
+    else {
+      println("Switched from GUI to TUI! Please repeat your input:")
+    }
     inputLoop()
   }
 
   def nextRound(): Unit = {
+    init = true
     printSpace()
     println(s"${BLUE}${BOLD}Player swap!${RESET}\n${GREEN}${BLACK_B} Is player ${GameManager.current + 1} ready? (Press 'y' if you're ready) ${RESET}")
   }
@@ -101,8 +109,9 @@ class TUI (val controller: GameController) extends Observer:
         None
       case "w" =>
         val winResult = controller.win()
-        if (!winResult) {
-          println(s"${RED_B}${BOLD} You are currently not able to win! ${RESET}")
+        winResult match {
+          case Failure(exception) => println(s"${RED_B}${BOLD} ${exception.getMessage} ${RESET}")
+          case _ => ()
         }
         None
       case "u" => controller.undo(); None
@@ -110,6 +119,10 @@ class TUI (val controller: GameController) extends Observer:
       case "" => None
       case null => None
       case _ =>
+        if (GameManager.swap) {
+          println(s"${RED_B}${BOLD}You can't play while swapping the players! ${RESET}")
+          return None
+        }
         if (input.contains("s")) {
           val strippedInput = input.replace("s", "")
           if (strippedInput.forall(_.isDigit)) {

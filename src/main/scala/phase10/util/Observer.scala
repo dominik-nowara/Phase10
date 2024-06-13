@@ -11,7 +11,6 @@ trait Observable:
 
 enum Event:
   case Quit
-  case Start
   case Draw
   case Swap
   case Win
