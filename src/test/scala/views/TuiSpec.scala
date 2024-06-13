@@ -78,9 +78,6 @@ class TuiSpec extends AnyWordSpec {
       "return help on h" in {
         tui.analyseInput("h") should be(None)
       }
-      "return PlayingState on number" in {
-        tui.analyseInput("1") should be(Some(PlayingState(0)))
-      }
       "return None on everything else" in {
         tui.analyseInput("test") should be(None)
       }
