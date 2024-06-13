@@ -2,6 +2,8 @@ package phase10.models
 
 import phase10.controller.GameManager
 
+import scala.util.{Failure, Success, Try}
+
 case class Player(name: String, cards: List[GameCard], phase: GamePhase) {
   override def toString: String = name + ": " + cardsToString()
   def cardsToString(): String = cards.mkString(" | ")
@@ -68,14 +70,24 @@ case class Player(name: String, cards: List[GameCard], phase: GamePhase) {
     this.copy(cards = newCards)
   }
 
-  def checkPhase(): Boolean = {
+  def checkPhase(): Try[String] = {
     val firstCheck = phase.firstCheck.check(cards, phase.phases.head.phaseNumber)
     if (phase.secondCheck.isEmpty) {
-      firstCheck
+      if (firstCheck) {
+        Success("Phase completed")
+      }
+      else {
+        Failure(Exception("Phase not completed"))
+      }
     }
     else {
       val secondCheck = phase.secondCheck.get.check(cards, phase.phases(1).phaseNumber)
-      firstCheck && secondCheck
+      if (firstCheck && secondCheck) {
+        Success("Phase completed")
+      }
+      else {
+        Failure(Exception("Phase not completed"))
+      }
     }
   }
 }
