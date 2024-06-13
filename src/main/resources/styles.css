@@ -1,0 +1,94 @@
+.background {
+    -fx-background-color: #1a1a1c;
+}
+
+.start-background {
+    -fx-background-color: #1a1a1c;
+    -fx-background-image: url("./images/cards.png"); /* Replace with your image URL or file path */
+    -fx-background-size: cover; /* Ensure the background image covers the entire scene */
+}
+
+.player-textfield {
+    -fx-background-color: #f0f0f0;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 16px;
+    -fx-padding: 10px;
+    -fx-border-width: 0px;
+    -fx-border-radius: 5px;
+    -fx-width: 200px;
+    -fx-background-color: #404047;
+    -fx-background-radius: 5px;
+}
+
+.custom-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-padding: 10px 50px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.custom-button:hover {
+    -fx-background-color: #0056b3;
+    -fx-cursor: hand;
+}
+
+.top-button {
+    -fx-background-color: #aaaaaa;
+    -fx-text-fill: black;
+    -fx-font-size: 18px;
+    -fx-padding: 6px 30px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.top-button:hover {
+    -fx-background-color: #999999;
+    -fx-cursor: hand;
+}
+
+.win-button {
+    -fx-background-color: #cf9832;
+    -fx-text-fill: black;
+    -fx-font-size: 18px;
+    -fx-padding: 6px 30px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.win-button:hover {
+    -fx-background-color: #a87c27;
+    -fx-cursor: hand;
+}
+
+.card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-border-width: 6px;
+    -fx-border-color: #FFFFFF;
+}
+
+.empty-stack {
+    -fx-background-color: #888888;
+    -fx-background-radius: 5px;
+    -fx-opacity: 0.4;
+    -fx-border-radius: 5px;
+    -fx-border-width: 6px;
+    -fx-border-color: #FFFFFF;
+}
+
+.card-selected {
+    -fx-background-color: #f6f6f6;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-border-width: 6px;
+    -fx-border-color: #FFFFFF;
+}
+
+.card:hover {
+    -fx-cursor: hand;
+    -fx-background-color: #f0f0f0;
+    -fx-opacity: 0.8;
+}
