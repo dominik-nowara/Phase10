@@ -3,26 +3,29 @@ package phase10.controller
 import phase10.models.*
 import phase10.util.*
 
+import scala.util.{Success, Try, Failure}
+
 class GameController(var player: List[Player]) extends Observable {
   val undoManager = new UndoManager[List[Player]]
   def initGame(count: Int): Unit = {
     player = List.tabulate(count)(i => PlayerFactory.createPlayer(s"Player ${i + 1}"))
+    notifyObservers(Event.Draw)
   }
   def doAndPublish(state: GameState): Unit = {
-
     state.run(this, notifyObservers) match {
       case Some(newPlayer) => player = newPlayer
       case None => ()
     }
   }
 
-  def win(): Boolean = {
-    val win = player(GameManager.current).checkPhase()
-    if (win) {
-      notifyObservers(Event.Win)
-      return true
+  def win(): Try[String] = {
+    player(GameManager.current).checkPhase() match {
+      case Success(text) =>
+        notifyObservers(Event.Win)
+        Success(text)
+
+      case Failure(exception) => Failure(exception)
     }
-    false
   }
 
   def undo(): Unit = {

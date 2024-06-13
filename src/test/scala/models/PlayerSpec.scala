@@ -5,6 +5,8 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers.*
 import phase10.controller.GameManager
 
+import scala.util.{Failure, Success}
+
 class PlayerSpec extends AnyWordSpec {
   "Player" should {
     "PlayerFactory should create player correctly" in {
@@ -134,12 +136,15 @@ class PlayerSpec extends AnyWordSpec {
       val phases = GamePhase(List(Phase.PhaseTypes.DOUBLE))
       val player = Player("Player 1", cards, phases)
       val checkPhase = player.checkPhase()
-      checkPhase should be (true)
+      checkPhase should be (Success("Phase completed"))
 
       val phases2 = GamePhase(List(Phase.PhaseTypes.QUINTUPLE))
       val player2 = Player("Player 2", cards, phases2)
       val checkPhase2 = player2.checkPhase()
-      checkPhase2 should be (false)
+      checkPhase2 match {
+        case Success(_) => fail("Should not be success")
+        case Failure(e) => e.getMessage should be("Phase not completed")
+      }
     }
 
     "check phase with double and triple" in {
@@ -158,12 +163,15 @@ class PlayerSpec extends AnyWordSpec {
       val phases = GamePhase(List(Phase.PhaseTypes.DOUBLE, Phase.PhaseTypes.TRIPLE))
       val player = Player("Player 1", cards, phases)
       val checkPhase = player.checkPhase()
-      checkPhase should be(true)
+      checkPhase should be (Success("Phase completed"))
 
       val phases2 = GamePhase(List(Phase.PhaseTypes.DOUBLE, Phase.PhaseTypes.QUADRUPLE))
       val player2 = Player("Player 2", cards, phases2)
       val checkPhase2 = player2.checkPhase()
-      checkPhase2 should be(false)
+      checkPhase2 match {
+        case Success(_) => fail("Should not be success")
+        case Failure(e) => e.getMessage should be ("Phase not completed")
+      }
     }
     "heck phase with double and color" in {
       val cards = List(
@@ -181,7 +189,7 @@ class PlayerSpec extends AnyWordSpec {
       val phases = GamePhase(List(Phase.PhaseTypes.DOUBLE, Phase.PhaseTypes.COLOR))
       val player = Player("Player 1", cards, phases)
       val checkPhase = player.checkPhase()
-      checkPhase should be(true)
+      checkPhase should be (Success("Phase completed"))
 
       val cards2 = List(
         GameCard(Card.Colors.RED, Card.Numbers.ONE),
@@ -198,7 +206,10 @@ class PlayerSpec extends AnyWordSpec {
       val phases2 = GamePhase(List(Phase.PhaseTypes.DOUBLE, Phase.PhaseTypes.COLOR))
       val player2 = Player("Player 1", cards2, phases)
       val checkPhase2 = player2.checkPhase()
-      checkPhase2 should be(false)
+      checkPhase2 match {
+        case Success(_) => fail("Should not be success")
+        case Failure(e) => e.getMessage should be("Phase not completed")
+      }
     }
     "check phase with double and fourrow" in {
       val cards = List(
@@ -217,7 +228,7 @@ class PlayerSpec extends AnyWordSpec {
       val phases = GamePhase(List(Phase.PhaseTypes.DOUBLE, Phase.PhaseTypes.FOURROW))
       val player = Player("Player 1", cards, phases)
       val checkPhase = player.checkPhase()
-      checkPhase should be(true)
+      checkPhase should be (Success("Phase completed"))
     }
     "check phase with double and joker" in {
       val cards = List(
@@ -236,7 +247,7 @@ class PlayerSpec extends AnyWordSpec {
       val phases = GamePhase(List(Phase.PhaseTypes.DOUBLE, Phase.PhaseTypes.FOURROW))
       val player = Player("Player 1", cards, phases)
       val checkPhase = player.checkPhase()
-      checkPhase should be(true)
+      checkPhase should be (Success("Phase completed"))
 
       val cards2 = List(
         GameCard(Card.Colors.RED, Card.Numbers.ONE),
@@ -254,7 +265,10 @@ class PlayerSpec extends AnyWordSpec {
       val phases2 = GamePhase(List(Phase.PhaseTypes.DOUBLE, Phase.PhaseTypes.FOURROW))
       val player2 = Player("Player 1", cards2, phases)
       val checkPhase2 = player2.checkPhase()
-      checkPhase2 should be(false)
+      checkPhase2 match {
+        case Success(_) => fail("Should not be success")
+        case Failure(e) => e.getMessage should be ("Phase not completed")
+      }
 
 
       val cards3 = List(
@@ -273,7 +287,10 @@ class PlayerSpec extends AnyWordSpec {
       val phases3 = GamePhase(List(Phase.PhaseTypes.DOUBLE, Phase.PhaseTypes.FOURROW))
       val player3 = Player("Player 1", cards3, phases)
       val checkPhase3 = player3.checkPhase()
-      checkPhase3 should be(false)
+      checkPhase3 match {
+        case Success(_) => fail("Should not be success")
+        case Failure(e) => e.getMessage should be("Phase not completed")
+      }
     }
   }
 }
