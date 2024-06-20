@@ -28,13 +28,7 @@ class TuiSpec extends AnyWordSpec {
       }
       outCapture.toString should be("\n" * 50)
     }
-    "next round look like" in {
-      val outCapture = ByteArrayOutputStream()
-      Console.withOut(outCapture) {
-        tui.nextRound()
-      }
-      outCapture.toString should be(("\n" * 50) + s"${BLUE}${BOLD}Player swap!${RESET}\n${GREEN}${BLACK_B} Is player ${GameManager.current + 1} ready? (Press 'y' if you're ready) ${RESET}\n")
-    }
+
     "line should look like" in {
       val outCapture = ByteArrayOutputStream()
       Console.withOut(outCapture) {

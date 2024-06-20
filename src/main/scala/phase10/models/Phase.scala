@@ -1,7 +1,9 @@
 package phase10.models
 
+import phase10.models.CardComponent.IGameCard
+
 import scala.annotation.tailrec
-import phase10.models.GameCard
+import phase10.models.CardComponent.IGameCard
 
 object Phase {
   enum PhaseTypes(val phaseNumber: Int) {
@@ -19,11 +21,11 @@ object Phase {
   }
 
   trait Check {
-    def check(cardHand: List[GameCard], amount: Int): Boolean
+    def check(cardHand: List[IGameCard], amount: Int): Boolean
   }
 
   class CheckMultiple extends Check {
-    override def check(cards: List[GameCard], amount: Int): Boolean = {
+    override def check(cards: List[IGameCard], amount: Int): Boolean = {
       for (i <- cards.indices) {
         if (cards.count(card =>
           (card.number == cards(i).number
@@ -38,7 +40,7 @@ object Phase {
   }
 
   class CheckColor extends Check {
-    override def check(cards: List[GameCard], amount: Int): Boolean = {
+    override def check(cards: List[IGameCard], amount: Int): Boolean = {
       for (color <- Card.Colors.values) {
         if (cards.count(card => card.color == color || card.number == Card.Numbers.JOKER) >= 5) {
           return true
@@ -49,11 +51,11 @@ object Phase {
   }
 
   class CheckRows extends Check {
-    override def check(cards: List[GameCard], amount: Int): Boolean = {
+    override def check(cards: List[IGameCard], amount: Int): Boolean = {
       val sortedCards = cards.sortBy(_.number.ordinal)
 
       @tailrec
-      def checkConsecutive(cards: List[GameCard], previous: GameCard, count: Int): Boolean = {
+      def checkConsecutive(cards: List[IGameCard], previous: IGameCard, count: Int): Boolean = {
         cards match {
           case current :: tail =>
             if (current.number.ordinal == previous.number.ordinal + 1) {
@@ -77,43 +79,5 @@ object Phase {
   }
 }
 
-class GamePhase(val phases: List[Phase.PhaseTypes]) {
-  override def toString: String = phases.mkString(", ")
 
-  val firstCheck: Phase.Check = phases.head match {
-    case Phase.PhaseTypes.DOUBLE | Phase.PhaseTypes.TRIPLE 
-         | Phase.PhaseTypes.QUADRUPLE | Phase.PhaseTypes.QUINTUPLE => new Phase.CheckMultiple
-    case Phase.PhaseTypes.FOURROW | Phase.PhaseTypes.SEVENROW 
-         | Phase.PhaseTypes.EIGHTROW | Phase.PhaseTypes.NINEROW => new Phase.CheckRows
-    case Phase.PhaseTypes.COLOR => new Phase.CheckColor
-  }
 
-  val secondCheck: Option[Phase.Check] = if (phases.size == 2) phases(1) match {
-    case Phase.PhaseTypes.DOUBLE | Phase.PhaseTypes.TRIPLE 
-         | Phase.PhaseTypes.QUADRUPLE | Phase.PhaseTypes.QUINTUPLE => Some(new Phase.CheckMultiple)
-    case Phase.PhaseTypes.FOURROW | Phase.PhaseTypes.SEVENROW 
-         | Phase.PhaseTypes.EIGHTROW | Phase.PhaseTypes.NINEROW => Some(new Phase.CheckRows)
-    case Phase.PhaseTypes.COLOR => Some(new Phase.CheckColor)
-  } else None
-}
-
-object PhaseFactory {
-  def generatePhases(playerName: String, time: Long): GamePhase = {
-    val hash = hashFunction(playerName, time, 0);
-    val phaseTypes = Phase.PhaseTypes.values.toSeq
-    
-    val firstPhase = phaseTypes(hash % phaseTypes.size)
-
-    if (hash % 3 < 2 || firstPhase.ordinal > 5)
-      return GamePhase(List(firstPhase))
-      
-    val secondPhase = phaseTypes((hash + 3) % 5)
-    
-    GamePhase(List(firstPhase, secondPhase))
-  }
-
-  private def hashFunction(playerName: String, time: Long, position: Int): Int = {
-    val toHash = s"$playerName$time$position";
-    toHash.hashCode.abs
-  }
-}
