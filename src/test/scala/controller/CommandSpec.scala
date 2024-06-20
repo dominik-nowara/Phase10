@@ -3,6 +3,9 @@ package phase10.controller
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 import phase10.models.*
+import phase10.models.CardComponent.GameCard
+import phase10.models.PhaseComponent.GamePhase
+import phase10.models.PlayerComponent.Player
 
 class CommandSpec extends AnyWordSpec {
   "A Command" when {

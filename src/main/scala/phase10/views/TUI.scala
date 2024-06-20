@@ -1,17 +1,16 @@
 package phase10.views
 
-import phase10.controller.{GameController, GameManager}
+import phase10.controller.{GameController, GameManager, IGameController}
 import phase10.util.*
 
 import scala.io.AnsiColor.*
 import scala.io.StdIn.readLine
-
 import scala.util.Failure
 
-class TUI (val controller: GameController) extends Observer:
+class TUI (val controller: IGameController) extends Observer:
   controller.add(this)
-  var continue = true
-  var init = false
+  private var continue = true
+  private var init = false
 
   override def update(e: Event): Unit =
     e match
@@ -64,7 +63,8 @@ class TUI (val controller: GameController) extends Observer:
 
   def printRound(): Unit = {
     printSpace()
-    val player = controller.player(GameManager.current)
+    val playerList = controller.players()
+    val player = playerList(GameManager.current)
     println(s"${WHITE}Current Phase: ${BOLD}${player.phase}${RESET}")
     if (GameManager.stack.isDefined) {
       val stack = GameManager.stack
@@ -87,7 +87,7 @@ class TUI (val controller: GameController) extends Observer:
 
   def win (): Unit = {
     continue = false
-    println(s"${GREEN}${BOLD}Player ${GameManager.current} won!${RESET}\n${RESET}")
+    println(s"${GREEN}${BOLD}Player ${GameManager.current + 1} won!${RESET}\n${RESET}")
   }
 
   def inputLoop(): Unit =
