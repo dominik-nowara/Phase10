@@ -1,9 +1,10 @@
 package phase10.models.PhaseComponent
 
+import com.google.inject.Inject
 import phase10.models.Phase
 import phase10.models.PhaseComponent.IGamePhase
 
-class GamePhase(override val phases: List[Phase.PhaseTypes]) extends IGamePhase(phases) {
+class GamePhase @Inject() (override val phases: List[Phase.PhaseTypes]) extends IGamePhase(phases) {
   override def toString: String = phases.mkString(", ")
 
   override val firstCheck: Phase.Check = phases.head match {

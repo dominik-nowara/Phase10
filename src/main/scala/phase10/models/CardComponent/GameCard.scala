@@ -1,11 +1,12 @@
 package phase10.models.CardComponent
 
+import com.google.inject.Inject
 import phase10.models.Card
 import phase10.models.Card.*
 
 import scala.io.AnsiColor.*
 
-case class GameCard(override val color: Card.Colors, override val number: Card.Numbers)
+case class GameCard @Inject() (override val color: Card.Colors, override val number: Card.Numbers)
   extends IGameCard(color, number) {
 
   override def toString: String = {

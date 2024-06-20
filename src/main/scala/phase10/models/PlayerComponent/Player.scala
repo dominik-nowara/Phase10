@@ -1,5 +1,6 @@
 package phase10.models.PlayerComponent
 
+import com.google.inject.Inject
 import phase10.controller.GameManager
 import phase10.models.Card
 import phase10.models.CardComponent.IGameCard
@@ -8,12 +9,12 @@ import phase10.util.GameFactories
 
 import scala.util.{Failure, Success, Try}
 
-case class Player(
+case class Player @Inject() (
    override val name: String,
    override val cards: List[IGameCard],
    override val phase: IGamePhase
  )
-  extends IPlayer(
+  extends IPlayer (
     name,
     cards,
     phase

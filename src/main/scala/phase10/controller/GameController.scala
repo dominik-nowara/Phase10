@@ -1,5 +1,6 @@
 package phase10.controller
 
+import com.google.inject.Inject
 import phase10.models.*
 import phase10.models.CardComponent.IGameCard
 import phase10.models.PlayerComponent.IPlayer
@@ -7,7 +8,7 @@ import phase10.util.*
 
 import scala.util.{Failure, Success, Try}
 
-class GameController(var player: List[IPlayer]) extends Observable, IGameController {
+class GameController @Inject() (var player: List[IPlayer]) extends Observable, IGameController {
   override val undoManager = new UndoManager[List[IPlayer]]
   def players(): List[IPlayer] = player
 
