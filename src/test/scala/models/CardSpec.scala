@@ -3,13 +3,16 @@ package phase10.models
 import scala.io.AnsiColor.*
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers.*
-
 import scala.util.Random
+
+import phase10.util.GameFactories
+import phase10.models.Card
+import phase10.models.CardComponent.GameCard
 
 class CardSpec extends AnyWordSpec {
   "A Phase 10 Card" when {
     "random stack" should {
-      val cards = CardFactory.generateStack("Player 1", 10, List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
+      val cards = GameFactories.generateStack("Player 1", 10, List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
       "have ten cards at generation" in {
         cards.size should be(10)
       }

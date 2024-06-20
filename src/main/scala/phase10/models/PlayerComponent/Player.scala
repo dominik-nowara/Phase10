@@ -1,10 +1,23 @@
-package phase10.models
+package phase10.models.PlayerComponent
 
 import phase10.controller.GameManager
+import phase10.models.Card
+import phase10.models.CardComponent.IGameCard
+import phase10.models.PhaseComponent.IGamePhase
+import phase10.util.GameFactories
 
 import scala.util.{Failure, Success, Try}
 
-case class Player(name: String, cards: List[GameCard], phase: GamePhase) {
+case class Player(
+   override val name: String,
+   override val cards: List[IGameCard],
+   override val phase: IGamePhase
+ )
+  extends IPlayer(
+    name,
+    cards,
+    phase
+  ) {
   override def toString: String = name + ": " + cardsToString()
   def cardsToString(): String = cards.mkString(" | ")
 
@@ -12,7 +25,7 @@ case class Player(name: String, cards: List[GameCard], phase: GamePhase) {
     cards.zipWithIndex.map { case (card, index) => s"  ${index + 1}${card.extraSpace()}  |" }.mkString
   }
 
-  def nextPlayer(card: GameCard, amountPlayer: Int): Unit = {
+  def nextPlayer(card: IGameCard, amountPlayer: Int): Unit = {
     if (card.number == Card.Numbers.BLOCK) {
       GameManager.nextPlayer(amountPlayer, 2)
     }
@@ -30,9 +43,9 @@ case class Player(name: String, cards: List[GameCard], phase: GamePhase) {
     }
   }
 
-  def doExchange(position: Int, amountPlayer: Int): Player = {
+  def doExchange(position: Int, amountPlayer: Int): IPlayer = {
     nextPlayer(cards(position), amountPlayer)
-    val newCard = CardFactory.generateCard(name, System.currentTimeMillis(), position)
+    val newCard = GameFactories.generateCard(name, System.currentTimeMillis(), position)
     val oldCard = cards(position)
     val beforeCards = cards.slice(0, position) :+ newCard
     val newCards = beforeCards ++ cards.slice(position + 1, cards.length)
@@ -40,7 +53,7 @@ case class Player(name: String, cards: List[GameCard], phase: GamePhase) {
     this.copy(cards = newCards)
   }
 
-  def undoExchange(position: Int, amountPlayer: Int): Player = {
+  def undoExchange(position: Int, amountPlayer: Int): IPlayer = {
     previousPlayer(amountPlayer)
     val newCard = GameManager.stack.get.last
     val newCardBefore = cards.slice(0, position) :+ newCard;
@@ -49,17 +62,17 @@ case class Player(name: String, cards: List[GameCard], phase: GamePhase) {
     this.copy(cards = newCards)
   }
 
-   def doStackSwap(position: Int, amountPlayer: Int): Player = {
-     nextPlayer(cards(position), amountPlayer)
-     swapFromStack(position)
-   }
+  def doStackSwap(position: Int, amountPlayer: Int): IPlayer = {
+    nextPlayer(cards(position), amountPlayer)
+    swapFromStack(position)
+  }
 
-   def undoStackSwap(position: Int, amountPlayer: Int): Player = {
-     previousPlayer(amountPlayer)
-     swapFromStack(position)
-   }
+  def undoStackSwap(position: Int, amountPlayer: Int): IPlayer = {
+    previousPlayer(amountPlayer)
+    swapFromStack(position)
+  }
 
-  def swapFromStack(position: Int): Player = {
+  def swapFromStack(position: Int): IPlayer = {
     val cardOnStack = GameManager.stack.get.last
     val currentCard = cards(position)
 
@@ -89,14 +102,5 @@ case class Player(name: String, cards: List[GameCard], phase: GamePhase) {
         Failure(Exception("Phase not completed"))
       }
     }
-  }
-}
-
-object PlayerFactory {
-  def createPlayer(name: String): Player = {
-    val cardPositions = List.range(0, 10)
-    val time = System.currentTimeMillis()
-    Player(name, CardFactory.generateStack(name, time, cardPositions),
-      PhaseFactory.generatePhases(name, time))
   }
 }

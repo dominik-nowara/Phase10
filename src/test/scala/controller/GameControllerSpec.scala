@@ -4,6 +4,9 @@ import phase10.models.*
 import phase10.util.*
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers.*
+import phase10.models.CardComponent.GameCard
+import phase10.models.PhaseComponent.GamePhase
+import phase10.models.PlayerComponent.Player
 
 import scala.util.{Failure, Success}
 

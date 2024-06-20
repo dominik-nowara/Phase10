@@ -1,7 +1,8 @@
 package phase10.views
 
-import phase10.controller.{GameController, GameManager}
-import phase10.models.{Card, GameCard}
+import phase10.controller.{GameController, GameManager, IGameController}
+import phase10.models.CardComponent.IGameCard
+import phase10.models.Card
 import phase10.util.{Event, Observer, PlayingState, StackState, SwapState}
 import scalafx.application.{JFXApp3, Platform}
 import scalafx.scene.Scene
@@ -14,7 +15,7 @@ import scalafx.scene.paint.Color
 
 import scala.util.Failure
 
-class GUI (val controller: GameController) extends JFXApp3, Observer {
+class GUI (val controller: IGameController) extends JFXApp3, Observer {
   controller.add(this)
 
   private var secondMiddleSection: FlowPane = new FlowPane()
@@ -159,7 +160,8 @@ class GUI (val controller: GameController) extends JFXApp3, Observer {
       logo.smooth = true
 
       val cardCreator = new CardCreator
-      val cards: Seq[VBox] = cardCreator.createCards(controller.player(GameManager.current).cards)
+      val players = controller.players()
+      val cards: Seq[VBox] = cardCreator.createCards(players(GameManager.current).cards)
 
       val topButtons: HBox = new HBox {
         children = Seq(
@@ -230,7 +232,7 @@ class GUI (val controller: GameController) extends JFXApp3, Observer {
       val phaseTitle: Label = new Label(s"${GameManager.current + 1}. Player Phases") {
         style = "-fx-font-weight: bold; -fx-font-size: 30px; -fx-text-fill: #FFFFFF;"
       }
-      val phases: Label = new Label(controller.player(GameManager.current).phase.phases.mkString("\n")) {
+      val phases: Label = new Label(players(GameManager.current).phase.phases.mkString("\n")) {
         style = "-fx-font-weight: bold; -fx-font-size: 20px; -fx-text-fill: #999999;"
       }
       val phasesBox: VBox = new VBox(10) {
@@ -295,11 +297,11 @@ class GUI (val controller: GameController) extends JFXApp3, Observer {
 
 
    private class CardCreator {
-    def createCards(cards: List[GameCard]): Seq[VBox] = {
+    def createCards(cards: List[IGameCard]): Seq[VBox] = {
       cards.map(card => createCard(card, stack = false))
     }
 
-    def createCard(card: GameCard, stack: Boolean): VBox = {
+    def createCard(card: IGameCard, stack: Boolean): VBox = {
       val color = getColorcode(card.color)
       val number = card.number.ordinal match {
         case 12 => "\uD83D\uDEAB"

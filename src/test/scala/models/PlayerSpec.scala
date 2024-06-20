@@ -4,13 +4,17 @@ import scala.io.AnsiColor.*
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers.*
 import phase10.controller.GameManager
+import phase10.models.PlayerComponent.Player
+import phase10.models.CardComponent.GameCard
+import phase10.models.PhaseComponent.GamePhase
+import phase10.util.GameFactories
 
 import scala.util.{Failure, Success}
 
 class PlayerSpec extends AnyWordSpec {
   "Player" should {
     "PlayerFactory should create player correctly" in {
-      val player = PlayerFactory.createPlayer("Player 1")
+      val player = GameFactories.createPlayer("Player 1")
       player.name should be("Player 1")
       player.cards.length should be (10)
     }
@@ -18,19 +22,19 @@ class PlayerSpec extends AnyWordSpec {
       val cards = List(
         GameCard(Card.Colors.RED, Card.Numbers.ONE)
       )
-      val player = Player("Player 1", cards, PhaseFactory.generatePhases("Player 1", 1))
+      val player = Player("Player 1", cards, GameFactories.generatePhases("Player 1", 1))
       player.name should be("Player 1")
       player.cards.length should be (1)
       player.toString should be (s"Player 1: ${RED_B}${BLACK} 1 ${RESET}")
     }
     "create line correctly" in {
       val cards = List(GameCard(Card.Colors.RED, Card.Numbers.ONE), GameCard(Card.Colors.RED, Card.Numbers.TWO))
-      val player = Player("Player 1", cards, PhaseFactory.generatePhases("Player 1", 1))
+      val player = Player("Player 1", cards, GameFactories.generatePhases("Player 1", 1))
       player.createLine() should be ("  1  |  2  |")
     }
     "card exchange should" in {
       val cards = List(GameCard(Card.Colors.RED, Card.Numbers.ONE), GameCard(Card.Colors.RED, Card.Numbers.TWO))
-      val player = Player("Player 1", cards, PhaseFactory.generatePhases("Player 1", 1))
+      val player = Player("Player 1", cards, GameFactories.generatePhases("Player 1", 1))
       player.doExchange(0, 2)
 
       player.cards.length should be (2)
@@ -42,7 +46,7 @@ class PlayerSpec extends AnyWordSpec {
         GameCard(Card.Colors.YELLOW, Card.Numbers.ONE)
       ))
       val cards = List(GameCard(Card.Colors.RED, Card.Numbers.ONE), GameCard(Card.Colors.RED, Card.Numbers.TWO))
-      val player = Player("Player 1", cards, PhaseFactory.generatePhases("Player 1", 1))
+      val player = Player("Player 1", cards, GameFactories.generatePhases("Player 1", 1))
 
       val newPlayerFirst = player.undoExchange(0, 2)
       newPlayerFirst.cards.length should be (2)
@@ -56,7 +60,7 @@ class PlayerSpec extends AnyWordSpec {
     "swap from stack should" in {
       GameManager.stack = Some(List(GameCard(Card.Colors.RED, Card.Numbers.THREE)))
       val cards = List(GameCard(Card.Colors.RED, Card.Numbers.ONE), GameCard(Card.Colors.RED, Card.Numbers.TWO))
-      val player = Player("Player 1", cards, PhaseFactory.generatePhases("Player 1", 1))
+      val player = Player("Player 1", cards, GameFactories.generatePhases("Player 1", 1))
       player.swapFromStack(1)
 
       player.cards.length should be (2)
@@ -65,7 +69,7 @@ class PlayerSpec extends AnyWordSpec {
     }
     "next player add amount from current count" in {
       val cards = List(GameCard(Card.Colors.RED, Card.Numbers.ONE), GameCard(Card.Colors.RED, Card.Numbers.TWO))
-      val player = Player("Player 1", cards, PhaseFactory.generatePhases("Player 1", 1))
+      val player = Player("Player 1", cards, GameFactories.generatePhases("Player 1", 1))
       val card = GameCard(Card.Colors.RED, Card.Numbers.THREE)
 
       GameManager.current = 0
@@ -83,7 +87,7 @@ class PlayerSpec extends AnyWordSpec {
     }
     "do swap from stack should" in {
       val cards = List(GameCard(Card.Colors.RED, Card.Numbers.ONE), GameCard(Card.Colors.RED, Card.Numbers.TWO))
-      val player = Player("Player 1", cards, PhaseFactory.generatePhases("Player 1", 1))
+      val player = Player("Player 1", cards, GameFactories.generatePhases("Player 1", 1))
       val card = GameCard(Card.Colors.RED, Card.Numbers.THREE)
 
       GameManager.stack = Some(List(GameCard(Card.Colors.RED, Card.Numbers.THREE)))
@@ -100,7 +104,7 @@ class PlayerSpec extends AnyWordSpec {
     }
     "undo swap from stack should" in {
       val cards = List(GameCard(Card.Colors.RED, Card.Numbers.ONE), GameCard(Card.Colors.RED, Card.Numbers.TWO))
-      val player = Player("Player 1", cards, PhaseFactory.generatePhases("Player 1", 1))
+      val player = Player("Player 1", cards, GameFactories.generatePhases("Player 1", 1))
       val card = GameCard(Card.Colors.RED, Card.Numbers.THREE)
 
       GameManager.stack = Some(List(GameCard(Card.Colors.RED, Card.Numbers.THREE)))
