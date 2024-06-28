@@ -1,5 +1,6 @@
-package phase10.controller
+package phase10.controller.CommandImpl
 
+import phase10.controller.GameControllerImpl.GameManager
 import phase10.models.PlayerComponent.IPlayer
 import phase10.util.Command
 

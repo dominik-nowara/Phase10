@@ -1,10 +1,10 @@
 package phase10.util
 
 import org.scalatest.wordspec.AnyWordSpec
-import phase10.controller.GameController
 import org.scalatest.matchers.should.Matchers.*
+import phase10.controller.GameControllerImpl.GameController
 
-class GameStateSpec  extends AnyWordSpec {
+class GameStateSpec extends AnyWordSpec {
   "GameState" should {
     "be able to be run" in {
       val controller = GameController(List())

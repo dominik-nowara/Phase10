@@ -13,6 +13,8 @@ libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.18"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.18" % "test"
 libraryDependencies += "org.scalafx" %% "scalafx" % "21.0.0-R32"
 libraryDependencies += "net.codingwell" %% "scala-guice" % "7.0.0"
+libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "2.3.0"
+libraryDependencies += "org.playframework" %% "play-json" % "3.0.4"
 
 parallelExecution in Test := false
 

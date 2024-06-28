@@ -1,6 +1,7 @@
 package phase10.views
 
-import phase10.controller.{GameController, GameManager, IGameController}
+import phase10.controller.GameControllerImpl.{GameController, GameManager}
+import phase10.controller.IGameController
 import phase10.models.CardComponent.IGameCard
 import phase10.models.Card
 import phase10.util.{Event, Observer, PlayingState, StackState, SwapState}
@@ -12,6 +13,7 @@ import scalafx.scene.layout.{FlowPane, HBox, Priority, StackPane, VBox}
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.paint.Color
+import scalafx.stage.{DirectoryChooser, FileChooser}
 
 import scala.util.Failure
 
@@ -38,6 +40,14 @@ class GUI (val controller: IGameController) extends JFXApp3, Observer {
       case Event.Swap =>
         Platform.runLater {
           stage.scene = playScene()
+        }
+      case Event.Save =>
+        Platform.runLater {
+          new Alert(AlertType.Information) {
+            initOwner(stage)
+            title = "Game saved!"
+            headerText = "The game has been saved successfully!"
+          }.showAndWait()
         }
 
   override def start(): Unit = {
@@ -191,6 +201,43 @@ class GUI (val controller: IGameController) extends JFXApp3, Observer {
             margin = Insets(0, 5, 0, 5)
             onAction = _ => {
               controller.redo()
+            }
+          },
+          new Button("Save") {
+            styleClass += "top-button"
+            margin = Insets(0, 5, 0, 5)
+            onAction = _ => {
+              val directoryChooser = new DirectoryChooser {
+                title = "Select Directory"
+              }
+              val selectedDirectory = directoryChooser.showDialog(stage)
+              if (selectedDirectory != null) {
+                println(selectedDirectory.getAbsolutePath)
+                controller.save(selectedDirectory.getAbsolutePath + "/")
+              } else {
+                controller.save("")
+              }
+            }
+          },
+          new Button("Load") {
+            styleClass += "top-button"
+            margin = Insets(0, 5, 0, 5)
+            onAction = _ => {
+              val fileChooser = new FileChooser {
+                title = "Select File"
+                extensionFilters.addAll(
+                  new FileChooser.ExtensionFilter("Json Files", "*.json"),
+                  new FileChooser.ExtensionFilter("XML Files", "*.xml"),
+                  new FileChooser.ExtensionFilter("All Files", "*.*")
+                )
+              }
+              val selectedFile = fileChooser.showOpenDialog(stage)
+              if (selectedFile != null) {
+                val path = selectedFile.getAbsolutePath.replace(".json", "").replace(".xml", "")
+                controller.load(path)
+              } else {
+                controller.load("game")
+              }
             }
           }
         )

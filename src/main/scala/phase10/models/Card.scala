@@ -1,5 +1,4 @@
 package phase10.models
-
 object Card {
   enum Colors:
     case RED, BLUE, GREEN, YELLOW, BLACK

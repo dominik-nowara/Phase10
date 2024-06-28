@@ -6,6 +6,7 @@ import phase10.controller.*
 import scala.io.AnsiColor.*
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers.*
+import phase10.controller.GameControllerImpl.GameController
 import phase10.util.{PlayingState, SwapState}
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}

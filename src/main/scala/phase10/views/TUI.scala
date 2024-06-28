@@ -1,6 +1,7 @@
 package phase10.views
 
-import phase10.controller.{GameController, GameManager, IGameController}
+import phase10.controller.GameControllerImpl.{GameController, GameManager}
+import phase10.controller.IGameController
 import phase10.util.*
 
 import scala.io.AnsiColor.*
@@ -18,6 +19,7 @@ class TUI (val controller: IGameController) extends Observer:
       case Event.Draw => nextRound()
       case Event.Win => win()
       case Event.Swap => printRound()
+      case Event.Save => println(s"${GREEN}Saved game successfully!${RESET}")
 
   def initialize(): Unit = {
     println(s"${BLACK_B}${BOLD}" +
@@ -117,8 +119,20 @@ class TUI (val controller: IGameController) extends Observer:
       case "u" => controller.undo(); None
       case "r" => controller.redo(); None
       case "" => None
+      case "save" => controller.save(""); None
+      case "load" => controller.load("game"); None
       case null => None
       case _ =>
+        if (input.contains("save")) {
+          val strippedInput = input.replace("save ", "")
+          controller.save(strippedInput + "/")
+          return None
+        }
+        else if (input.contains("load")) {
+          val strippedInput = input.replace(".json", "").replace(".xml", "")
+          controller.load(strippedInput)
+          return None
+        }
         if (GameManager.swap) {
           println(s"${RED_B}${BOLD}You can't play while swapping the players! ${RESET}")
           return None

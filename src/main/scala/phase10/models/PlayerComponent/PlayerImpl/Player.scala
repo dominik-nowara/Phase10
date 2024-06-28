@@ -1,25 +1,31 @@
-package phase10.models.PlayerComponent
+package phase10.models.PlayerComponent.PlayerImpl
 
 import com.google.inject.Inject
-import phase10.controller.GameManager
+import phase10.controller.GameControllerImpl.GameManager
 import phase10.models.Card
+import phase10.models.CardComponent.GameCardImpl.GameCard
 import phase10.models.CardComponent.IGameCard
+import phase10.models.PhaseComponent.GamePhaseImpl.GamePhase
 import phase10.models.PhaseComponent.IGamePhase
+import phase10.models.PlayerComponent.IPlayer
 import phase10.util.GameFactories
+import play.api.libs.json.{JsResult, JsSuccess, JsValue, Json, OWrites, Reads, Writes}
 
 import scala.util.{Failure, Success, Try}
+import scala.xml.Node
 
-case class Player @Inject() (
-   override val name: String,
-   override val cards: List[IGameCard],
-   override val phase: IGamePhase
- )
-  extends IPlayer (
+case class Player @Inject()(
+                             override val name: String,
+                             override val cards: List[IGameCard],
+                             override val phase: IGamePhase
+                           )
+  extends IPlayer(
     name,
     cards,
     phase
   ) {
   override def toString: String = name + ": " + cardsToString()
+
   def cardsToString(): String = cards.mkString(" | ")
 
   def createLine(): String = {
@@ -102,6 +108,26 @@ case class Player @Inject() (
       else {
         Failure(Exception("Phase not completed"))
       }
+    }
+  }
+
+  def toXml: Node = <player><name>{name}</name><cards>{cards.map(c => c.toXml)}</cards><playerphases>{phase.toXml}</playerphases></player>
+}
+
+object Player {
+  def fromXml(node: Node): IPlayer = {
+    val name = (node \ "name").text
+    val cards = (node \ "cards" \ "card").map(c => GameCard.fromXml(c))
+    val playerPhase = (node \ "playerphases").map(p => GamePhase.fromXml(p))
+    Player(name, cards.toList, playerPhase.head)
+  }
+  
+  implicit val playerReads: Reads[Player] = new Reads[Player] {
+    override def reads(json: JsValue): JsResult[Player] = {
+      val name = (json \ "name").as[String]
+      val cards = (json \ "cards").as[List[GameCard]]
+      val playerPhase = (json \ "phase").as[GamePhase]
+      JsSuccess(Player(name, cards, playerPhase))
     }
   }
 }
