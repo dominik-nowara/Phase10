@@ -1,7 +1,8 @@
 package phase10
 
 import com.google.inject.{Guice, Injector}
-import phase10.controller.{GameController, IGameController}
+import phase10.controller.GameControllerImpl.GameController
+import phase10.controller.IGameController
 import phase10.views.{GUI, TUI}
 
 import java.io.{FileOutputStream, PrintStream}

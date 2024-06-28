@@ -1,6 +1,8 @@
 package phase10.util
 
-import phase10.controller.{GameController, GameManager, IGameController, PlayCommand, SwapCommand}
+import phase10.controller.CommandImpl.{PlayCommand, SwapCommand}
+import phase10.controller.GameControllerImpl.{GameController, GameManager}
+import phase10.controller.IGameController
 import phase10.models.PlayerComponent.IPlayer
 
 trait GameState(val position: Int) {

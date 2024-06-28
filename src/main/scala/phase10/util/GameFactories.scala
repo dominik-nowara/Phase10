@@ -1,15 +1,18 @@
 package phase10.util
 
-import phase10.models.CardComponent.{GameCard, IGameCard}
+import phase10.models.CardComponent.GameCardImpl.GameCard
+import phase10.models.CardComponent.IGameCard
+import phase10.models.PhaseComponent.GamePhaseImpl.GamePhase
 import phase10.models.{Card, Phase}
-import phase10.models.PhaseComponent.{GamePhase, IGamePhase}
-import phase10.models.PlayerComponent.{IPlayer, Player}
+import phase10.models.PhaseComponent.IGamePhase
+import phase10.models.PlayerComponent.{IPlayer, PlayerImpl}
+import phase10.models.PlayerComponent.PlayerImpl.Player
 
 object GameFactories {
   def createPlayer(name: String): IPlayer = {
     val cardPositions = List.range(0, 10)
     val time = System.currentTimeMillis()
-    Player(name, generateStack(name, time, cardPositions),
+    PlayerImpl.Player(name, generateStack(name, time, cardPositions),
       generatePhases(name, time))
   }
 
