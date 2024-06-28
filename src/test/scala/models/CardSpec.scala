@@ -3,11 +3,13 @@ package phase10.models
 import scala.io.AnsiColor.*
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers.*
-import scala.util.Random
 
+import scala.util.Random
 import phase10.util.GameFactories
 import phase10.models.Card
-import phase10.models.CardComponent.GameCard
+import phase10.models.CardComponent.GameCardImpl.GameCard
+import phase10.models.CardComponent.IGameCard
+import play.api.libs.json.Json
 
 class CardSpec extends AnyWordSpec {
   "A Phase 10 Card" when {
@@ -21,7 +23,7 @@ class CardSpec extends AnyWordSpec {
       }
     }
     "a card" should {
-      val card = GameCard(Card.Colors.RED, Card.Numbers.ONE)
+      val card: IGameCard = GameCard(Card.Colors.RED, Card.Numbers.ONE)
       "be equal to" in {
         card.toString should be(s"${RED_B}${BLACK} 1 ${RESET}")
       }
@@ -62,6 +64,24 @@ class CardSpec extends AnyWordSpec {
         card12.toString should be(s"${RED_B}${BLACK} 12 ${RESET}")
         jokerCard.toString should be(s"${BLACK_B} J ${RESET}")
         blockCard.toString should be(s"${BLACK_B} B ${RESET}")
+      }
+      "convert to JSON" in {
+        val json = Json.toJson(card)
+        json.toString() should be("{\"color\":\"RED\",\"number\":\"ONE\"}")
+      }
+      "convert from JSON" in {
+        val json = Json.toJson(card)
+        val obj = Json.fromJson[GameCard](json)
+        obj.get should be(card)
+      }
+      "convert to XML" in {
+        val xml = card.toXml.toString
+        xml should be("<card><color>RED</color><number>ONE</number></card>")
+      }
+      "convert from XML" in {
+        val xml = card.toXml
+        val obj = GameCard.fromXml(xml)
+        obj should be(card)
       }
     }
   }

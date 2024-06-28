@@ -1,11 +1,13 @@
 package phase10.controller
 
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
+import phase10.controller.CommandImpl.{PlayCommand, SwapCommand}
 import phase10.models.*
-import phase10.models.CardComponent.GameCard
-import phase10.models.PhaseComponent.GamePhase
-import phase10.models.PlayerComponent.Player
+import phase10.models.CardComponent.GameCardImpl.GameCard
+import phase10.models.PhaseComponent.GamePhaseImpl.GamePhase
+import phase10.models.PlayerComponent.PlayerImpl
+import phase10.models.PlayerComponent.PlayerImpl.Player
 
 class CommandSpec extends AnyWordSpec {
   "A Command" when {
@@ -24,7 +26,7 @@ class CommandSpec extends AnyWordSpec {
           GameCard(Card.Colors.YELLOW, Card.Numbers.NINE)
         )
         val phases = GamePhase(List(Phase.PhaseTypes.DOUBLE))
-        val players = List(Player("Player 1", cards, phases))
+        val players = List(PlayerImpl.Player("Player 1", cards, phases))
 
         val command = PlayCommand(players, 0, 1)
         val stepResult = command.noStep(players)
@@ -46,7 +48,7 @@ class CommandSpec extends AnyWordSpec {
           GameCard(Card.Colors.YELLOW, Card.Numbers.NINE)
         )
         val phases = GamePhase(List(Phase.PhaseTypes.DOUBLE))
-        val players = List(Player("Player 1", cards, phases))
+        val players = List(PlayerImpl.Player("Player 1", cards, phases))
 
         val command = SwapCommand(players, 0, 1)
         val stepResult = command.noStep(players)

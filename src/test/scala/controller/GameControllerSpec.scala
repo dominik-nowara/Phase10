@@ -4,9 +4,12 @@ import phase10.models.*
 import phase10.util.*
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers.*
-import phase10.models.CardComponent.GameCard
-import phase10.models.PhaseComponent.GamePhase
-import phase10.models.PlayerComponent.Player
+import phase10.controller.GameControllerImpl.{GameController, GameManager}
+import phase10.models.CardComponent.GameCardImpl.GameCard
+import phase10.models.PhaseComponent.GamePhaseImpl.GamePhase
+import phase10.models.PlayerComponent.PlayerImpl
+import phase10.models.PlayerComponent.PlayerImpl.Player
+import phase10.util.FileIO.FIleIOImpl.JsonFileIO
 
 import scala.util.{Failure, Success}
 
@@ -44,6 +47,81 @@ class GameControllerSpec extends AnyWordSpec {
       controller.quitGame()
       testObserver.bing should be(false)
     }
+    "save and load with json should work" in {
+      val jsonFileIO = JsonFileIO()
+      val player = controller.players()
+      jsonFileIO.save(controller, "")
+      jsonFileIO.load(controller, "game")
+      controller.players().toString() should be (player.toString())
+
+      GameManager.stack = Some(List(GameCard(Card.Colors.RED, Card.Numbers.ONE)))
+      jsonFileIO.save(controller, "")
+      jsonFileIO.load(controller, "game")
+      controller.players().toString() should be(player.toString())
+    }
+    "save and load with xml should work" in {
+      val xmlFileIO = FileIO.FIleIOImpl.XmlFileIO()
+      val player = controller.players()
+      xmlFileIO.save(controller, "")
+      xmlFileIO.load(controller, "game")
+      controller.players().toString() should be (player.toString())
+
+      GameManager.stack = Some(List(GameCard(Card.Colors.RED, Card.Numbers.ONE)))
+      xmlFileIO.save(controller, "")
+      xmlFileIO.load(controller, "game")
+      GameManager.stack should be(Some(List(GameCard(Card.Colors.RED, Card.Numbers.ONE))))
+      controller.players().toString() should be (player.toString())
+    }
+    "game controller save should work" in {
+      class TestObserver(controller: GameController) extends Observer:
+        controller.add(this)
+        var bing = false
+
+        def update(e: Event) = {
+          e match {
+            case Event.Save => bing = true
+            case Event.Draw => bing = true
+          }
+        }
+
+      val testObserver = TestObserver(controller)
+
+      testObserver.bing should be(false)
+      controller.save("")
+      testObserver.bing should be (true)
+    }
+    "game controller load should work" in {
+      class TestObserver(controller: GameController) extends Observer:
+        controller.add(this)
+        var bing = false
+
+        def update(e: Event) = {
+          e match {
+            case Event.Draw => bing = true
+            case _ => ()
+          }
+        }
+
+      val testObserver = TestObserver(controller)
+
+      testObserver.bing should be(false)
+      controller.save("")
+      controller.load("game")
+      testObserver.bing should be(true)
+    }
+    "game manager xml should work" in {
+      GameManager.stack = Some(List(GameCard(Card.Colors.RED, Card.Numbers.ONE)))
+      val xml = GameManager.toXml
+      GameManager.fromXml(xml)
+      GameManager.current should be(0)
+      GameManager.stack should be(Some(List(GameCard(Card.Colors.RED, Card.Numbers.ONE))))
+
+      GameManager.stack = None
+      val xml2 = GameManager.toXml
+      GameManager.fromXml(xml2)
+      GameManager.current should be(0)
+      GameManager.stack should be(None)
+    }
     "do and publish should work" in {
       val cards = List(
         GameCard(Card.Colors.RED, Card.Numbers.ONE),
@@ -58,7 +136,7 @@ class GameControllerSpec extends AnyWordSpec {
         GameCard(Card.Colors.YELLOW, Card.Numbers.NINE)
       )
       val phases = GamePhase(List(Phase.PhaseTypes.DOUBLE))
-      val players = List(Player("Player 1", cards, phases))
+      val players = List(PlayerImpl.Player("Player 1", cards, phases))
       val customControllers = GameController(players)
 
       GameManager.stack = None
@@ -117,7 +195,7 @@ class GameControllerSpec extends AnyWordSpec {
       )
       val phases = GamePhase(List(Phase.PhaseTypes.QUINTUPLE))
       val phases2 = GamePhase(List(Phase.PhaseTypes.DOUBLE))
-      val players = List(Player("Player 1", cards, phases), Player("Player 2", cards, phases2))
+      val players = List(PlayerImpl.Player("Player 1", cards, phases), PlayerImpl.Player("Player 2", cards, phases2))
 
       val customController = GameController(players)
 
@@ -162,7 +240,7 @@ class GameControllerSpec extends AnyWordSpec {
         GameCard(Card.Colors.YELLOW, Card.Numbers.NINE)
       )
       val phases = GamePhase(List(Phase.PhaseTypes.DOUBLE))
-      val players = List(Player("Player 1", cards, phases))
+      val players = List(PlayerImpl.Player("Player 1", cards, phases))
       val customController = GameController(players)
 
       class TestObserver(controller: GameController) extends Observer:
@@ -206,7 +284,7 @@ class GameControllerSpec extends AnyWordSpec {
         GameCard(Card.Colors.YELLOW, Card.Numbers.NINE)
       )
       val phases = GamePhase(List(Phase.PhaseTypes.DOUBLE))
-      val players = List(Player("Player 1", cards, phases))
+      val players = List(PlayerImpl.Player("Player 1", cards, phases))
       val customController = GameController(players)
 
       customController.undo()
@@ -257,7 +335,7 @@ class GameControllerSpec extends AnyWordSpec {
         GameCard(Card.Colors.YELLOW, Card.Numbers.NINE)
       )
       val phases = GamePhase(List(Phase.PhaseTypes.DOUBLE))
-      val players = List(Player("Player 1", cards, phases))
+      val players = List(PlayerImpl.Player("Player 1", cards, phases))
       val customController = GameController(players)
 
       customController.redo()
@@ -313,7 +391,7 @@ class GameControllerSpec extends AnyWordSpec {
         GameCard(Card.Colors.YELLOW, Card.Numbers.NINE)
       )
       val phases = GamePhase(List(Phase.PhaseTypes.DOUBLE))
-      val players = List(Player("Player 1", cards, phases))
+      val players = List(PlayerImpl.Player("Player 1", cards, phases))
       val customController = GameController(players)
 
       class TestObserver(controller: GameController) extends Observer:
